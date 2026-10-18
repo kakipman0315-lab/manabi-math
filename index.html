@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#635bff">
+<title>まなびAI 数学チャレンジ</title>
+<style>
+:root{--purple:#635bff;--ink:#20213a;--muted:#73758e;--bg:#f5f6ff;--line:#e5e6f4;--green:#16865b;--red:#d7445a}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eeedff 0,#f7f8ff 270px,var(--bg) 100%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);min-height:100vh}
+.wrap{max-width:740px;margin:auto;padding:16px 13px 38px}.top{display:flex;align-items:center;gap:11px;margin:6px 0 18px}.logo{width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,#827aff,#4941db);display:grid;place-items:center;color:#fff;font-size:27px;box-shadow:0 8px 20px #635bff40}.brand{font-weight:850;font-size:20px}.sub{color:var(--muted);font-size:12px}.pill{margin-left:auto;background:#e4fbef;color:#08774b;border-radius:99px;padding:7px 10px;font-size:11px;font-weight:800}
+.hero{border-radius:24px;padding:21px;background:linear-gradient(135deg,#635bff,#827aff);color:#fff;box-shadow:0 14px 32px #635bff2c}.hero h1{font-size:26px;line-height:1.25;margin:0 0 8px}.hero p{margin:0;color:#efeeff;font-size:14px;line-height:1.7}
+.card{background:#fff;border:1px solid #eeeff8;border-radius:21px;padding:17px;margin-top:14px;box-shadow:0 12px 35px #2d2b6510}h2{font-size:17px;margin:0 0 11px}.hint{font-size:12px;color:var(--muted);line-height:1.65}
+textarea,input{font:inherit}textarea{width:100%;min-height:105px;resize:vertical;border:1.5px solid #dfe1f3;border-radius:14px;padding:13px;font-size:15px;line-height:1.6;outline:none;background:#fcfcff}textarea:focus,input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #635bff18}
+.examples{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 14px}.chip{border:1px solid #e1e2f4;background:#f8f8ff;color:#4c4b7d;border-radius:999px;padding:8px 10px;font-size:12px}
+button{font:inherit;cursor:pointer}.primary{border:0;background:var(--purple);color:white;border-radius:13px;padding:14px 16px;font-weight:800;width:100%;box-shadow:0 7px 15px #635bff25}.primary:active{transform:translateY(1px)}.secondary{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:10px 13px;font-weight:700}
+.parsed{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.tag{font-size:12px;background:#f0efff;color:#4d45ca;border-radius:999px;padding:7px 10px;font-weight:700}
+.gamehead{display:flex;justify-content:space-between;gap:10px;align-items:center}.timer,.score{font-size:13px;color:var(--muted);font-weight:700}.timer strong,.score strong{font-size:18px;color:var(--ink);margin-left:4px}.progress{height:7px;background:#eeeefe;border-radius:99px;overflow:hidden;margin:12px 0 18px}.bar{height:100%;width:0;background:linear-gradient(90deg,#635bff,#a49fff);transition:width .2s}
+.question{font-size:clamp(23px,6vw,34px);font-weight:850;text-align:center;line-height:1.45;margin:18px 0}.answerrow{display:flex;gap:8px}.answerrow input{min-width:0;flex:1;border:1.5px solid #dfe1f3;border-radius:13px;padding:13px;font-size:18px;text-align:center}.answerrow button{width:auto}.feedback{margin-top:12px;padding:12px;border-radius:13px;line-height:1.6;font-size:14px;display:none}.good{display:block;background:#e8fbf1;color:#08774b}.bad{display:block;background:#fff0f2;color:#a62d40}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.row button{flex:1}.hidden{display:none!important}.resultbig{text-align:center;font-size:32px;font-weight:900;margin:12px 0 4px}.resultsub{text-align:center;color:var(--muted);font-size:13px}.rankrow{display:flex;align-items:center;gap:10px;border-bottom:1px solid #f0f0f7;padding:10px 0}.rankrow:last-child{border-bottom:0}.ranknum{width:29px;height:29px;border-radius:10px;background:#f0efff;color:#5148df;display:grid;place-items:center;font-weight:900}.rankscore{margin-left:auto;font-weight:850}.smallbtn{border:0;background:transparent;color:#777993;font-size:12px;text-decoration:underline;padding:8px}
+footer{text-align:center;color:#8b8da3;font-size:11px;line-height:1.7;padding:18px 8px}
+@media(min-width:600px){.wrap{padding-top:24px}.hero{padding:27px}.card{padding:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="logo">✦</div><div><div class="brand">まなびAI 数学チャレンジ</div><div class="sub">お願いするだけで、問題にチャレンジ！</div></div><div class="pill">無料版</div></header>
+<section class="hero"><h1>きみ専用の問題を<br>つくろう！ 🚀</h1><p>やりたい問題をふつうの文章で入力してね。問題数・難しさ・時間を読み取ってゲームを作るよ。</p></section>
+<section class="card" id="setup">
+<h2>💬 どんな問題にする？</h2>
+<textarea id="request" placeholder="例：中学3年の因数分解を10問、難しめで、制限時間3分！"></textarea>
+<div class="examples">
+<button class="chip" data-prompt="小学校5年生の算数を簡単な順に20問">小5・算数20問</button>
+<button class="chip" data-prompt="中学3年生の因数分解を10問、難しめ、制限時間3分">中3・因数分解</button>
+<button class="chip" data-prompt="高校数学の入試レベルを10問、制限時間なし">高校・入試レベル</button>
+<button class="chip" data-prompt="足し算と引き算を15問、制限時間2分">計算練習</button>
+</div>
+<button class="primary" id="make">問題を作ってスタート！ ✨</button>
+<div class="hint" style="margin-top:10px">この無料版は、入力文の条件を読み取って端末内で問題を生成するよ。オンラインAIとの会話機能はまだ接続していないよ。</div>
+<div class="parsed" id="parsed"></div>
+</section>
+<section class="card hidden" id="game">
+<div class="gamehead"><div class="score">スコア<strong id="score">0</strong></div><div class="timer">のこり<strong id="time">60</strong>秒</div><div class="score">問題<strong id="count">1/10</strong></div></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="question" id="question">問題</div>
+<div class="answerrow"><input id="answer" inputmode="decimal" autocomplete="off" placeholder="答えを入力"><button class="primary" id="check" style="width:110px">回答！</button></div>
+<div class="feedback" id="feedback"></div>
+<div class="row"><button class="secondary" id="skip">わからない</button><button class="secondary" id="quit">終了する</button></div>
+</section>
+<section class="card hidden" id="result">
+<h2>🎉 チャレンジ結果</h2><div class="resultbig" id="resultscore">0点</div><div class="resultsub" id="resultsub"></div>
+<div class="row"><button class="primary" id="retry">同じ条件でもう一度</button><button class="secondary" id="home">別の問題を作る</button></div>
+<h2 style="margin-top:22px">🏆 この端末のランキング TOP 10</h2><div id="ranking"></div>
+<div class="hint">ランキングはこの端末のブラウザ内に保存されるよ。別の端末とは共有されないよ。</div>
+</section>
+<section class="card" id="rankcard"><h2>🏆 ランキング TOP 10</h2><div id="rankinghome"></div><div class="hint">この端末でプレイした記録が保存されるよ。</div></section>
+<footer>まなびAI 数学チャレンジ · 無料で遊べる試作版<br>ブラウザのデータを消すとランキングも消える場合があります。</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let cfg={count:10,seconds:60,topic:'mix',level:1,difficulty:'ふつう'}, questions=[],idx=0,score=0,correct=0,remaining=60,timer=null,locked=false,lastRequest='';
+function parseRequest(s){
+ const t=s.replace(/\s/g,'');
+ let count=10, seconds=60, level=1, difficulty='ふつう', topic='mix';
+ const cm=t.match(/(\d+)\s*問/); if(cm) count=Math.max(1,Math.min(50,+cm[1]));
+ if(/時間制限なし|制限時間なし|時間なし|タイマーなし/.test(t)) seconds=0;
+ else {
+  let m=t.match(/(\d+)\s*分/); if(m) seconds=Math.min(3600,+m[1]*60);
+  m=t.match(/(\d+)\s*秒/); if(m && !/制限時間なし/.test(t)) seconds=Math.min(3600,+m[1]);
+ }
+ let g=t.match(/(?:小学校?|小学|小)([1-6])(?:年生?)?/); if(g) level=+g[1];
+ g=t.match(/(?:中学校?|中学|中)([1-3])(?:年生?)?/); if(g) level=+g[1]+6;
+ g=t.match(/(?:高校|高等学校|高)([1-3])(?:年生?)?/); if(g) level=+g[1]+9;
+ if(/小学校|小学|小[1-6]/.test(t) && !g) level=5;
+ if(/中学|中[1-3]/.test(t) && !g) level=8;
+ if(/高校|高等学校/.test(t) && !g) level=10;
+ if(/簡単|やさし|易し/.test(t)) difficulty='かんたん';
+ if(/難しめ|難しい|むずかし|入試|発展|チャレンジ/.test(t)) difficulty='むずかしめ';
+ if(/因数分解/.test(t)) topic='factor';
+ else if(/連立方程式/.test(t)) topic='linear';
+ else if(/方程式|一次方程式/.test(t)) topic='equation';
+ else if(/分数/.test(t)) topic='fraction';
+ else if(/掛け算|かけ算|乗法|×/.test(t)) topic='mul';
+ else if(/割り算|わり算|除法|÷/.test(t)) topic='div';
+ else if(/足し算|たし算|加法|足し/.test(t)) topic='add';
+ else if(/引き算|ひき算|減法|引き/.test(t)) topic='sub';
+ else if(/算数|数学|計算/.test(t)) topic='mix';
+ return {count,seconds,level,difficulty,topic};
+}
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+function gcd(a,b){return b?gcd(b,a%b):Math.abs(a)}
+function makeQuestion(c){
+ const hard=c.difficulty==='むずかしめ', easy=c.difficulty==='かんたん', lev=c.level;
+ let a,b,op,ans,txt,explain;
+ const choose=c.topic==='mix'? (lev>=9?['equation','factor','mul','div'][rand(0,3)]:lev>=7?['equation','mul','div','fraction'][rand(0,3)]:['add','sub','mul','div'][rand(0,3)]):c.topic;
+ if(choose==='factor' && lev>=8){
+  let x=rand(1,hard?12:8), y=rand(1,hard?12:8);
+  txt=`x² + ${x+y}x + ${x*y} を因数分解`; ans=`(x+${x})(x+${y})`;
+  if(x===y) ans=`(x+${x})²`;
+  return {txt,ans,displayAns:ans,explain:`${x}×${y}=${x*y}、${x}+${y}=${x+y} なので、(x+${x})(x+${y}) になるよ。`,type:'text'};
+ }
+ if((choose==='equation'||choose==='linear') && lev>=7){
+  if(choose==='linear'){
+   let x=rand(1,10), y=rand(1,10), a=rand(1,4), b=rand(1,4);
+   if(a===b)b++;
+   let s1=a*x+b*y,s2=a*x-b*y;
+   txt=`${a}x + ${b}y = ${s1}、${a}x − ${b}y = ${s2} のとき、x = ?`;
+   return {txt,ans:String(x),displayAns:String(x),explain:`2つの式を足すと ${2*a}x = ${s1+s2}。よって x = ${x}。`,type:'number'};
+  }
+  a=rand(2,hard?15:9); let x=rand(1,hard?20:10), b=rand(-12,12); let rhs=a*x+b;
+  txt=`${a}x ${b<0?'− '+Math.abs(b):'+ '+b} = ${rhs} のとき、x = ?`; ans=String(x);
+  return {txt,ans,displayAns:ans,explain:`両辺から ${b} を引く（または足す）と ${a}x = ${a*x}。${a}で割って x = ${x}。`,type:'number'};
+ }
+ if(choose==='fraction' && lev>=4){
+  let d1=rand(2,hard?12:8), d2=rand(2,hard?12:8), n1=rand(1,d1-1), n2=rand(1,d2-1);
+  let den=d1*d2, num=n1*d2+n2*d1, g=gcd(num,den); num/=g;den/=g;
+  txt=`${n1}/${d1} + ${n2}/${d2} = ?`; ans=den===1?String(num):`${num}/${den}`;
+  return {txt,ans,displayAns:ans,explain:`通分して足すと ${ans} になるよ。`,type:'fraction'};
+ }
+ if(choose==='mul'){a=rand(2,easy?10:hard?99:20);b=rand(2,easy?10:hard?99:20);op='×';ans=a*b;}
+ else if(choose==='div'){b=rand(2,easy?10:hard?20:12);ans=rand(2,easy?10:hard?50:20);a=b*ans;op='÷';}
+ else if(choose==='sub'){a=rand(10,easy?30:hard?500:100);b=rand(1,a);op='−';ans=a-b;}
+ else {a=rand(1,easy?30:hard?500:100);b=rand(1,easy?30:hard?500:100);op='+';ans=a+b;}
+ txt=`${a} ${op} ${b} = ?`;
+ return {txt,ans:String(ans),displayAns:String(ans),explain:`${a} ${op} ${b} = ${ans} だよ。`,type:'number'};
+}
+function startGame(){
+ lastRequest=$('request').value.trim()||'算数の計算を10問';
+ cfg=parseRequest(lastRequest); questions=Array.from({length:cfg.count},()=>makeQuestion(cfg)); idx=0;score=0;correct=0;remaining=cfg.seconds;locked=false;
+ $('setup').classList.add('hidden');$('rankcard').classList.add('hidden');$('result').classList.add('hidden');$('game').classList.remove('hidden');
+ $('time').textContent=cfg.seconds?remaining:'∞';$('score').textContent=score;$('count').textContent=`1/${questions.length}`;$('bar').style.width='0%';
+ $('parsed').innerHTML=[`問題数 ${cfg.count}問`,cfg.seconds?`時間 ${Math.floor(cfg.seconds/60)}分${cfg.seconds%60?cfg.seconds%60+'秒':''}`:'時間制限なし',`レベル ${cfg.level<=6?'小'+cfg.level:cfg.level<=9?'中'+(cfg.level-6):'高'+(cfg.level-9)}`,cfg.difficulty,`テーマ ${topicName(cfg.topic)}`].map(x=>`<span class="tag">${x}</span>`).join('');
+ showQuestion();
+ clearInterval(timer);if(cfg.seconds>0){timer=setInterval(()=>{remaining--; $('time').textContent=remaining;if(remaining<=0)finishGame();},1000)}
+}
+function topicName(t){return ({mix:'おまかせ',add:'足し算',sub:'引き算',mul:'掛け算',div:'割り算',fraction:'分数',equation:'方程式',linear:'連立方程式',factor:'因数分解'})[t]||'おまかせ'}
+function showQuestion(){if(idx>=questions.length){finishGame();return}locked=false;let q=questions[idx];$('question').textContent=q.txt;$('answer').value='';$('answer').disabled=false;$('check').disabled=false;$('feedback').className='feedback';$('feedback').style.display='none';$('count').textContent=`${idx+1}/${questions.length}`;$('bar').style.width=(idx/questions.length*100)+'%';$('answer').focus({preventScroll:true})}
+function submitAnswer(skip=false){
+ if(locked)return;locked=true;const q=questions[idx],input=$('answer').value.trim();let ok=false;
+ if(!skip){if(q.type==='text')ok=input.replace(/\s/g,'')===String(q.ans).replace(/\s/g,'');else if(q.type==='fraction'){let v=input.replace(/\s/g,'');ok=v===q.ans||(+v===+q.ans)}else ok=Number(input)===Number(q.ans)}
+ if(ok){correct++;score+=10;$('score').textContent=score;$('feedback').className='feedback good';$('feedback').innerHTML='正解！ +10点 🎉';}
+ else{$('feedback').className='feedback bad';$('feedback').innerHTML=`${skip?'答えは':'おしい！答えは'} <b>${q.displayAns}</b><br>${q.explain}`;}
+ $('feedback').style.display='block';$('answer').disabled=true;$('check').disabled=true;
+ setTimeout(()=>{idx++;showQuestion()},ok?550:1700);
+}
+function finishGame(){
+ clearInterval(timer);$('game').classList.add('hidden');$('result').classList.remove('hidden');$('resultscore').textContent=score+'点';$('resultsub').textContent=`${questions.length}問中 ${correct}問正解！ 正答率 ${Math.round(correct/questions.length*100)||0}%`;
+ try{let list=JSON.parse(localStorage.getItem('manabiRanks')||'[]');list.push({score,correct,total:questions.length,date:new Date().toLocaleDateString('ja-JP')});list.sort((a,b)=>b.score-a.score);list=list.slice(0,10);localStorage.setItem('manabiRanks',JSON.stringify(list));renderRanks()}catch(e){$('ranking').textContent='ランキングを保存できなかったよ。'}
+}
+function renderRankInto(id){let el=$(id);try{let list=JSON.parse(localStorage.getItem('manabiRanks')||'[]');el.innerHTML=list.length?list.map((r,i)=>`<div class="rankrow"><div class="ranknum">${i+1}</div><div><b>${r.date}</b><div class="hint">${r.correct}/${r.total}問正解</div></div><div class="rankscore">${r.score}点</div></div>`).join(''):'<div class="hint">まだ記録がないよ。1回プレイしてみよう！</div>'}catch(e){el.textContent='ランキングを表示できないよ。'}}
+function renderRanks(){renderRankInto('ranking');renderRankInto('rankinghome')}
+document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>{$('request').value=b.dataset.prompt;$('request').focus()}));
+$('make').addEventListener('click',startGame);$('check').addEventListener('click',()=>submitAnswer(false));$('skip').addEventListener('click',()=>submitAnswer(true));$('answer').addEventListener('keydown',e=>{if(e.key==='Enter')submitAnswer(false)});$('quit').addEventListener('click',finishGame);$('retry').addEventListener('click',()=>{$('request').value=lastRequest;startGame()});$('home').addEventListener('click',()=>{$('result').classList.add('hidden');$('setup').classList.remove('hidden');$('rankcard').classList.remove('hidden');renderRanks()});
+renderRanks();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>
